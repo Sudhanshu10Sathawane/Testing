@@ -500,6 +500,349 @@ public class AppTest {
 
     }
 
+    @Test
+    public void testBasicCase() {
+        App app = new App();
+        int[][] grid = {{2, 1, 1}, {1, 1, 0}, {0, 1, 1}};
+        assertEquals(4, app.orangesRotting(grid));
+    }
+
+    @Test
+    public void testNoFreshOranges() {
+        App app = new App();
+        int[][] grid = {{0, 2}};
+        assertEquals(0, app.orangesRotting(grid));
+    }
+
+    @Test
+    public void testUnreachableFreshOranges() {
+        App app = new App();
+        int[][] grid = {{2, 1, 1}, {0, 1, 1}, {1, 0, 1}};
+        assertEquals(-1, app.orangesRotting(grid));
+    }
+
+    @Test
+    public void testAllRottenInitially() {
+        App app = new App();
+        int[][] grid = {{2, 2}, {2, 2}};
+        assertEquals(0, app.orangesRotting(grid));
+    }
+
+    @Test
+    public void testAllFreshOranges() {
+        App app = new App();
+        int[][] grid = {{1, 1}, {1, 1}};
+        assertEquals(-1, app.orangesRotting(grid));
+    }
+    @Test
+    public void testBasicCase1() {
+        App app = new App();
+        int[][] image = {{1, 1, 1}, {1, 1, 0}, {1, 0, 1}};
+        int[][] expected = {{2, 2, 2}, {2, 2, 0}, {2, 0, 1}};
+        assertArrayEquals(expected, app.floodFill(image, 1, 1, 2));
+    }
+
+    @Test
+    public void testNoChangeNeeded() {
+        App app = new App();
+        int[][] image = {{0, 0, 0}, {0, 0, 0}};
+        int[][] expected = {{0, 0, 0}, {0, 0, 0}};
+        assertArrayEquals(expected, app.floodFill(image, 0, 0, 0));
+    }
+
+    @Test
+    public void testPartialFill() {
+        App app = new App();
+        int[][] image = {{0, 0, 0}, {0, 1, 1}};
+        int[][] expected = {{0, 0, 0}, {0, 2, 2}};
+        assertArrayEquals(expected, app.floodFill(image, 1, 1, 2));
+    }
+
+    @Test
+    public void testSinglePixelImage() {
+        App app = new App();
+        int[][] image = {{0}};
+        int[][] expected = {{2}};
+        assertArrayEquals(expected, app.floodFill(image, 0, 0, 2));
+    }
+
+    @Test
+    public void testDisconnectedRegion() {
+        App app = new App();
+        int[][] image = {{1, 1, 0}, {1, 0, 1}, {0, 1, 1}};
+        int[][] expected = {{2, 2, 0}, {2, 0, 1}, {0, 1, 1}};
+        assertArrayEquals(expected, app.floodFill(image, 0, 0, 2));
+    }
+    @Test
+    public void testSurroundedRegionsBasicCase() {
+        App app = new App();
+        char[][] board = {
+                {'X', 'X', 'X', 'X'},
+                {'X', 'O', 'O', 'X'},
+                {'X', 'X', 'O', 'X'},
+                {'X', 'O', 'X', 'X'}
+        };
+        char[][] expected = {
+                {'X', 'X', 'X', 'X'},
+                {'X', 'X', 'X', 'X'},
+                {'X', 'X', 'X', 'X'},
+                {'X', 'O', 'X', 'X'}
+        };
+        app.solve(board);
+        assertArrayEquals(expected, board);
+    }
+
+    @Test
+    public void testSurroundedRegionsSingleRow() {
+        App app = new App();
+        char[][] board = {
+                {'X', 'O', 'O', 'X'}
+        };
+        char[][] expected = {
+                {'X', 'O', 'O', 'X'}
+        };
+        app.solve(board);
+        assertArrayEquals(expected, board);
+    }
+
+    @Test
+    public void testSurroundedRegionsSingleColumn() {
+        App app = new App();
+        char[][] board = {
+                {'X'}, {'O'}, {'O'}, {'X'}
+        };
+        char[][] expected = {
+                {'X'}, {'O'}, {'O'}, {'X'}
+        };
+        app.solve(board);
+        assertArrayEquals(expected, board);
+    }
+
+    @Test
+    public void testSurroundedRegionsNoSurroundedRegions() {
+        App app = new App();
+        char[][] board = {
+                {'X', 'X', 'X'},
+                {'X', 'X', 'X'},
+                {'X', 'X', 'X'}
+        };
+        char[][] expected = {
+                {'X', 'X', 'X'},
+                {'X', 'X', 'X'},
+                {'X', 'X', 'X'}
+        };
+        app.solve(board);
+        assertArrayEquals(expected, board);
+    }
+
+    @Test
+    public void testSurroundedRegionsAllSurrounded() {
+        App app = new App();
+        char[][] board = {
+                {'O', 'O', 'O'},
+                {'O', 'O', 'O'},
+                {'O', 'O', 'O'}
+        };
+        char[][] expected = {
+                {'O', 'O', 'O'},
+                {'O', 'O', 'O'},
+                {'O', 'O', 'O'}
+        };
+        app.solve(board);
+        assertArrayEquals(expected, board);
+    }
+    @Test
+    public void testNumEnclavesBasicCase() {
+        App app = new App();
+        int[][] grid = {
+                {0, 0, 0, 0},
+                {1, 0, 1, 0},
+                {0, 1, 1, 0},
+                {0, 0, 0, 0}
+        };
+        assertEquals(3, app.numEnclaves(grid));
+    }
+
+    @Test
+    public void testNumEnclavesNoEnclaves() {
+        App app = new App();
+        int[][] grid = {
+                {0, 1, 1, 0},
+                {0, 0, 1, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, 0}
+        };
+        assertEquals(0, app.numEnclaves(grid));
+    }
+
+    @Test
+    public void testNumEnclavesAllLandEnclosed() {
+        App app = new App();
+        int[][] grid = {
+                {0, 0, 0},
+                {0, 1, 0},
+                {0, 0, 0}
+        };
+        assertEquals(1, app.numEnclaves(grid));
+    }
+
+    @Test
+    public void testNumEnclavesAllLandOnBoundary() {
+        App app = new App();
+        int[][] grid = {
+                {1, 1, 1},
+                {1, 0, 1},
+                {1, 1, 1}
+        };
+        assertEquals(0, app.numEnclaves(grid));
+    }
+
+    @Test
+    public void testNumEnclavesEmptyGrid() {
+        App app = new App();
+        int[][] grid = {
+                {0, 0},
+                {0, 0}
+        };
+        assertEquals(0, app.numEnclaves(grid));
+    }
+    @Test
+    public void testIsBipartiteBasicFalse() {
+        App app = new App();
+        int[][] graph = {
+                {1, 2, 3},
+                {0, 2},
+                {0, 1, 3},
+                {0, 2}
+        };
+        assertFalse(app.isBipartite(graph)); // The graph is not bipartite
+    }
+
+    @Test
+    public void testIsBipartiteBasicTrue() {
+        App app = new App();
+        int[][] graph = {
+                {1, 3},
+                {0, 2},
+                {1, 3},
+                {0, 2}
+        };
+        assertTrue(app.isBipartite(graph)); // The graph is bipartite
+    }
+
+    @Test
+    public void testIsBipartiteSingleNode() {
+        App app = new App();
+        int[][] graph = {
+                {}
+        };
+        assertTrue(app.isBipartite(graph)); // A single node is trivially bipartite
+    }
+
+    @Test
+    public void testIsBipartiteDisconnectedGraph() {
+        App app = new App();
+        int[][] graph = {
+                {1},
+                {0},
+                {3},
+                {2}
+        };
+        assertTrue(app.isBipartite(graph)); // The graph is bipartite (disconnected but bipartite)
+    }
+
+    @Test
+    public void testIsBipartiteAllConnected() {
+        App app = new App();
+        int[][] graph = {
+                {1},
+                {0, 2},
+                {1}
+        };
+        assertTrue(app.isBipartite(graph)); // The graph is bipartite
+    }
+    @Test
+    public void testPerfectSum1() {
+        App app = new App();
+        int[] arr = {5, 2, 3, 10, 6, 8};
+        int target = 10;
+        assertEquals(5, app.perfectSum(arr, target)); // There are 3 subsets: {5, 2, 3}, {2, 8}, {10}
+    }
+
+    @Test
+    public void testPerfectSum2() {
+        App app = new App();
+        int[] arr = {2, 5, 1, 4, 3};
+        int target = 10;
+        assertEquals(6, app.perfectSum(arr, target)); // There are 3 subsets: {2, 1, 4, 3}, {5, 1, 4}, {2, 5, 3}
+    }
+
+    @Test
+    public void testPerfectSum3() {
+        App app = new App();
+        int[] arr = {5, 7, 8};
+        int target = 3;
+        assertEquals(0, app.perfectSum(arr, target)); // No subsets sum up to 3
+    }
+
+    @Test
+    public void testPerfectSum4() {
+        App app = new App();
+        int[] arr = {35, 2, 8, 22};
+        int target = 0;
+        assertEquals(1, app.perfectSum(arr, target)); // Only the empty subset sums to 0
+    }
+
+    @Test
+    public void testPerfectSum5() {
+        App app = new App();
+        int[] arr = {1, 2, 3, 4, 5};
+        int target = 5;
+        assertEquals(5, app.perfectSum(arr, target)); // There are 3 subsets: {5}, {1, 4}, {2, 3}
+    }
+    @Test
+    public void testTrappingRainWater1() {
+        App app = new App();
+        int[] height = {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
+        assertEquals(6, app.trap(height));  // 6 units of water trapped
+    }
+
+    @Test
+    public void testTrappingRainWater2() {
+        App app = new App();
+        int[] height = {4, 2, 0, 3, 2, 5};
+        assertEquals(9, app.trap(height));  // 9 units of water trapped
+    }
+
+    @Test
+    public void testTrappingRainWater3() {
+        App app = new App();
+        int[] height = {1, 0, 2};
+        assertEquals(1, app.trap(height));  // 1 unit of water trapped
+    }
+
+    @Test
+    public void testTrappingRainWater4() {
+        App app = new App();
+        int[] height = {5, 4, 1, 2};
+        assertEquals(1, app.trap(height));  // No water trapped
+    }
+
+    @Test
+    public void testTrappingRainWater5() {
+        App app = new App();
+        int[] height = {0, 1, 0, 1, 0, 1, 0};
+        assertEquals(2, app.trap(height));  // 6 units of water trapped
+    }
+
+    @Test
+    public void testTrappingRainWater6() {
+        App app = new App();
+        int[] height = {0, 2, 0};
+        assertEquals(0, app.trap(height));  // No water trapped
+    }
+
+
 
 
 

@@ -445,6 +445,322 @@ public class App {
 
         return maxLength;
     }
+    public int orangesRotting(int[][] grid) {
+        if (grid == null || grid.length == 0) return -1;
+
+        int rows = grid.length;
+        int cols = grid[0].length;
+        Queue<int[]> queue = new LinkedList<>();
+        int freshOranges = 0;
+
+        // Step 1: Initialize the queue with all initially rotten oranges and count fresh oranges
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (grid[i][j] == 2) {
+                    queue.add(new int[]{i, j});
+                } else if (grid[i][j] == 1) {
+                    freshOranges++;
+                }
+            }
+        }
+
+        if (freshOranges == 0) return 0; // No fresh oranges to begin with
+
+        int minutes = -1; // Tracks the number of minutes elapsed
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+        // Step 2: Perform BFS
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            minutes++; // Each level in BFS represents 1 minute
+
+            for (int i = 0; i < size; i++) {
+                int[] current = queue.poll();
+                int row = current[0], col = current[1];
+
+                // Visit all 4 adjacent cells
+                for (int[] dir : directions) {
+                    int newRow = row + dir[0];
+                    int newCol = col + dir[1];
+
+                    // Check if the adjacent cell is within bounds and contains a fresh orange
+                    if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols && grid[newRow][newCol] == 1) {
+                        grid[newRow][newCol] = 2; // Mark the orange as rotten
+                        queue.add(new int[]{newRow, newCol});
+                        freshOranges--; // Decrease the count of fresh oranges
+                    }
+                }
+            }
+        }
+
+        return freshOranges == 0 ? minutes : -1; // If no fresh oranges are left, return minutes; otherwise, -1
+    }
+    // Entry method for flood fill
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+        // Edge case: If the color is already the same as the new color, return the image
+        if (image[sr][sc] == color) {
+            return image;
+        }
+
+        // Store the original color of the starting pixel
+        int originalColor = image[sr][sc];
+
+        // Perform the fill operation using a helper method
+        fill(image, sr, sc, originalColor, color);
+
+        // Return the modified image
+        return image;
+    }
+
+    // Recursive helper method for flood fill
+    private void fill(int[][] image, int row, int col, int originalColor, int newColor) {
+        // Check if the current position is out of bounds
+        if (row < 0 || row >= image.length || col < 0 || col >= image[0].length) {
+            return;
+        }
+
+        // Check if the current pixel does not match the original color
+        if (image[row][col] != originalColor) {
+            return;
+        }
+
+        // Change the color of the current pixel to the new color
+        image[row][col] = newColor;
+
+        // Recursive calls to fill adjacent pixels
+        fill(image, row + 1, col, originalColor, newColor); // Down
+        fill(image, row - 1, col, originalColor, newColor); // Up
+        fill(image, row, col + 1, originalColor, newColor); // Right
+        fill(image, row, col - 1, originalColor, newColor); // Left
+    }
+
+    // Iterative version of flood fill (BFS approach)
+    public int[][] floodFillIterative(int[][] image, int sr, int sc, int color) {
+        // Edge case: If the color is already the same as the new color, return the image
+        if (image[sr][sc] == color) {
+            return image;
+        }
+
+        // Initialize the queue for BFS
+        Queue<int[]> queue = new LinkedList<>();
+
+        // Store the original color of the starting pixel
+        int originalColor = image[sr][sc];
+
+        // Add the starting pixel to the queue
+        queue.add(new int[]{sr, sc});
+
+        // Directions for moving up, down, left, and right
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+        // Process each pixel in the queue
+        while (!queue.isEmpty()) {
+            // Remove the front element from the queue
+            int[] current = queue.poll();
+
+            // Get the row and column of the current pixel
+            int row = current[0];
+            int col = current[1];
+
+            // Change the color of the current pixel to the new color
+            image[row][col] = color;
+
+            // Explore all adjacent pixels
+            for (int[] direction : directions) {
+                int newRow = row + direction[0];
+                int newCol = col + direction[1];
+
+                // Check if the adjacent pixel is valid and matches the original color
+                if (isValid(image, newRow, newCol, originalColor)) {
+                    queue.add(new int[]{newRow, newCol});
+                }
+            }
+        }
+
+        // Return the modified image
+        return image;
+    }
+
+    // Helper method to check if a pixel is valid
+    private boolean isValid(int[][] image, int row, int col, int originalColor) {
+        // Check if the position is within bounds
+        if (row < 0 || row >= image.length || col < 0 || col >= image[0].length) {
+            return false;
+        }
+
+        // Check if the pixel matches the original color
+        return image[row][col] == originalColor;
+    }
+    public void solve(char[][] board) {
+        if (board == null || board.length == 0) return;
+
+        int rows = board.length;
+        int cols = board[0].length;
+
+        // Mark boundary connected 'O's with a temporary marker ('T')
+        for (int i = 0; i < rows; i++) {
+            dfs(board, i, 0);
+            dfs(board, i, cols - 1);
+        }
+        for (int j = 0; j < cols; j++) {
+            dfs(board, 0, j);
+            dfs(board, rows - 1, j);
+        }
+
+        // Replace all remaining 'O's with 'X' and revert 'T' back to 'O'
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (board[i][j] == 'O') {
+                    board[i][j] = 'X';
+                } else if (board[i][j] == 'T') {
+                    board[i][j] = 'O';
+                }
+            }
+        }
+    }
+
+    private void dfs(char[][] board, int i, int j) {
+        if (i < 0 || j < 0 || i >= board.length || j >= board[0].length || board[i][j] != 'O') {
+            return;
+        }
+
+        board[i][j] = 'T'; // Mark as visited
+        dfs(board, i - 1, j);
+        dfs(board, i + 1, j);
+        dfs(board, i, j - 1);
+        dfs(board, i, j + 1);
+    }
+    public int numEnclaves(int[][] grid) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        // Eliminate land cells connected to the boundary
+        for (int i = 0; i < rows; i++) {
+            if (grid[i][0] == 1) dfs(grid, i, 0);
+            if (grid[i][cols - 1] == 1) dfs(grid, i, cols - 1);
+        }
+        for (int j = 0; j < cols; j++) {
+            if (grid[0][j] == 1) dfs(grid, 0, j);
+            if (grid[rows - 1][j] == 1) dfs(grid, rows - 1, j);
+        }
+
+        // Count remaining land cells
+        int count = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (grid[i][j] == 1) count++;
+            }
+        }
+        return count;
+    }
+
+    private void dfs(int[][] grid, int i, int j) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] == 0) return;
+
+        grid[i][j] = 0; // Mark the cell as visited
+        dfs(grid, i + 1, j); // Down
+        dfs(grid, i - 1, j); // Up
+        dfs(grid, i, j + 1); // Right
+        dfs(grid, i, j - 1); // Left
+    }
+    public boolean isBipartite(int[][] graph) {
+        int n = graph.length;
+        int[] colors = new int[n]; // Array to store colors of nodes (-1 means uncolored)
+        Arrays.fill(colors, -1); // Initialize all nodes as uncolored
+
+        // Try to color each uncolored node (in case the graph is disconnected)
+        for (int i = 0; i < n; i++) {
+            if (colors[i] == -1 && !dfs(graph, i, 0, colors)) {
+                return false; // If any component is not bipartite, return false
+            }
+        }
+        return true; // If no conflicts, the graph is bipartite
+    }
+
+    // Function to perform DFS and try to color the graph
+    private boolean dfs(int[][] graph, int node, int color, int[] colors) {
+        if (colors[node] != -1) {
+            return colors[node] == color; // If node is already colored, check if it matches the desired color
+        }
+        colors[node] = color; // Color the node with the current color
+        // Recurse for all adjacent nodes
+        for (int neighbor : graph[node]) {
+            if (!dfs(graph, neighbor, 1 - color, colors)) {
+                return false; // If a conflict occurs, return false
+            }
+        }
+        return true;
+    }
+    public int perfectSum(int[] arr, int target) {
+        int n = arr.length;
+        int MOD = 1000000007;
+        Integer[][] memo = new Integer[n + 1][target + 1];  // Memoization table
+        return findWays(arr, n, target, memo, MOD);
+    }
+
+    // Recursive function with memoization
+    private int findWays(int[] arr, int index, int target, Integer[][] memo, int MOD) {
+        // Base cases
+        if (target == 0) {
+            return 1;  // There's one way to form sum 0: by choosing the empty subset
+        }
+        if (index == 0) {
+            return (arr[0] == target) ? 1 : 0;  // If only one element is left, check if it matches the target
+        }
+
+        // If the result is already computed, return it
+        if (memo[index][target] != null) {
+            return memo[index][target];
+        }
+
+        // Option 1: Do not pick the current element, move to the next element
+        int notPick = findWays(arr, index - 1, target, memo, MOD);
+
+        // Option 2: Pick the current element (if it's less than or equal to the target)
+        int pick = 0;
+        if (arr[index - 1] <= target) {
+            pick = findWays(arr, index - 1, target - arr[index - 1], memo, MOD);
+        }
+
+        // Store the result in the memoization table and return it
+        memo[index][target] = (pick + notPick) % MOD;
+        return memo[index][target];
+    }
+    public int trap(int[] height) {
+        if (height == null || height.length == 0) {
+            return 0;
+        }
+
+        int n = height.length;
+
+        // Arrays to store the left_max and right_max values
+        int[] left_max = new int[n];
+        int[] right_max = new int[n];
+
+        // Initialize the left_max array
+        left_max[0] = height[0];
+        for (int i = 1; i < n; i++) {
+            left_max[i] = Math.max(left_max[i - 1], height[i]);
+        }
+
+        // Initialize the right_max array
+        right_max[n - 1] = height[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            right_max[i] = Math.max(right_max[i + 1], height[i]);
+        }
+
+        // Calculate the total amount of water trapped
+        int totalWater = 0;
+        for (int i = 0; i < n; i++) {
+            totalWater += Math.min(left_max[i], right_max[i]) - height[i];
+        }
+
+        return totalWater;
+    }
+
 
 
 
